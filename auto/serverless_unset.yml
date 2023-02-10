@@ -11,11 +11,11 @@ provider:
           Resource:
             - Fn::GetAtt: [ kinesisStream, Arn ]
 
-# CHANGE THE BELLOW VALUES ============              
+# USER SET VALUES =====================              
 custom: 
-  accessToken: Z8hBgbnsgjrLp1cpVuVb3w
-  realm: us1
-  prefix: tech-summit 
+  accessToken: $ACCESS_TOKEN
+  realm: $REALM
+  prefix: $PREFIX 
 #======================================    
 
 service: ${self:custom.prefix}-lambda-lab
