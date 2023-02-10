@@ -111,3 +111,18 @@ serverless deploy
 ```
 
 This command will follow the instructions in your `serverless.yml` template to create your Lambda functions and your Kinesis stream. 
+Expected output:
+```
+Deploying hostname-lambda-lab to stage dev (us-east-1)
+...
+...
+endpoint: POST - https://randomstring.execute-api.us-east-1.amazonaws.com/dev/producer
+functions:
+  producer: hostname-lambda-lab-dev-producer (1.6 kB)
+  consumer: hostname-lambda-lab-dev-consumer (1.6 kB)
+```
+
+Check the details of your serverless functions:
+```
+serverless info
+```
