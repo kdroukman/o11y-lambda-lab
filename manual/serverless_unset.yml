@@ -1,0 +1,65 @@
+provider:
+  name: aws
+  runtime: nodejs16.x
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - kinesis:PutRecord
+            - kinesis:PutRecords
+          Resource:
+            - Fn::GetAtt: [ kinesisStream, Arn ]
+
+# CHANGE THE BELLOW VALUES ============              
+custom: 
+  accessToken: $ACCESS_TOKEN
+  realm: $REALM
+  prefix: $PREFIX 
+#======================================    
+
+service: ${self:custom.prefix}-lambda-lab
+
+functions:
+  producer:
+    handler: handler.producer
+    events:
+      - http:
+          method: post
+          path: producer
+    environment:
+      AWS_LAMBDA_EXEC_WRAPPER: /opt/nodejs-otel-handler
+      OTEL_RESOURCE_ATTRIBUTES: deployment.environment=${self:custom.prefix}-test1
+      OTEL_SERVICE_NAME: producer-lambda
+      SPLUNK_ACCESS_TOKEN: ${self:custom.accessToken}
+      SPLUNK_REALM: ${self:custom.realm}
+      KINESIS_STREAM: ${self:custom.prefix}-eventStream  
+    layers:
+      - arn:aws:lambda:us-east-1:254067382080:layer:splunk-apm:70
+
+  consumer:
+    handler: handler.consumer
+    events:
+      - stream:
+          type: kinesis
+          arn:
+            Fn::GetAtt:
+              - kinesisStream
+              - Arn
+    environment:
+      AWS_LAMBDA_EXEC_WRAPPER: /opt/nodejs-otel-handler
+      OTEL_RESOURCE_ATTRIBUTES: deployment-environment=${self:custom.prefix}-test1
+      OTEL_SERVICE_NAME: consumer-lambda
+      SPLUNK_ACCESS_TOKEN: ${self:custom.accessToken}
+      SPLUNK_REALM: ${self:custom.realm}
+    layers:
+      - arn:aws:lambda:us-east-1:254067382080:layer:splunk-apm:70
+  
+resources:
+  Resources:
+    kinesisStream:
+      Type: AWS::Kinesis::Stream
+      Properties:
+        Name: ${self:custom.prefix}-eventStream
+        RetentionPeriodHours: 24
+        ShardCount: 1
