@@ -387,7 +387,7 @@ Click on *Go* and you should be able to find the logged Trace:
 Note how the *Trace ID* is something that makes up the trace *context* that we propagated.
 
 You can read up on the two common propagation standards:
-1. W3C: https://www.w3.org/TR/trace-context/#relationship-between-the-headers
+1. W3C: https://www.w3.org/TR/trace-context/#traceparent-header
 2. B3: https://github.com/openzipkin/b3-propagation#overall-process
 
 Which one are we using? *It should be self-explanatory from the Propagator we are creating in the Functions*
