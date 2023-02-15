@@ -29,7 +29,7 @@ functions:
           path: producer
     environment:
       AWS_LAMBDA_EXEC_WRAPPER: /opt/nodejs-otel-handler
-      OTEL_RESOURCE_ATTRIBUTES: deployment.environment=${self:custom.prefix}-test1
+      OTEL_RESOURCE_ATTRIBUTES: deployment.environment=${self:custom.prefix}-apm-lambda
       OTEL_SERVICE_NAME: producer-lambda
       SPLUNK_ACCESS_TOKEN: ${self:custom.accessToken}
       SPLUNK_REALM: ${self:custom.realm}
@@ -48,7 +48,7 @@ functions:
               - Arn
     environment:
       AWS_LAMBDA_EXEC_WRAPPER: /opt/nodejs-otel-handler
-      OTEL_RESOURCE_ATTRIBUTES: deployment-environment=${self:custom.prefix}-test1
+      OTEL_RESOURCE_ATTRIBUTES: deployment-environment=${self:custom.prefix}-apm-lambda
       OTEL_SERVICE_NAME: consumer-lambda
       SPLUNK_ACCESS_TOKEN: ${self:custom.accessToken}
       SPLUNK_REALM: ${self:custom.realm}
