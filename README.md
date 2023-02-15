@@ -307,7 +307,6 @@ functions:
   producer: hostname-lambda-lab-dev-producer (1.6 kB)
   consumer: hostname-lambda-lab-dev-consumer (1.6 kB)
 ```
-*Note: serverless.yml is in fact a CloudFormation template. CloudFormation is an infrastructure as code service from AWS. You can read more about it here - https://aws.amazon.com/cloudformation/*
 
 Check the details of your serverless functions:
 ```
@@ -367,7 +366,7 @@ Note that we are logging our Record value built inside the Producer function. Co
 
 ### Find your updated Lambda data in Splunk APM
 
-Navigate back to APM in Splunk Obeservabilty Cloud - https://app.us1.signalfx.com/#/apm
+Navigate back to APM in Splunk Observabilty Cloud - https://app.us1.signalfx.com/#/apm
 
 Navigate to Explore the Service Dependency Map again. 
 
@@ -385,9 +384,20 @@ Click on *Go* and you should be able to find the logged Trace:
 
 ![image](https://user-images.githubusercontent.com/5187861/219032326-becba400-c08d-4762-93b5-ba3f2c2322cb.png)
 
+Note how the *Trace ID* is something that makes up the trace *context* that we propagated.
+
+You can read up on the two common propagation standards:
+1. W3C: https://www.w3.org/TR/trace-context/#relationship-between-the-headers
+2. B3: https://github.com/openzipkin/b3-propagation#overall-process
+
+Which one are we using? *It should be self-explanatory from the Propagator we are creating in the Functions*
+**Bonus Question:** What happens if we mix and match the W3C and B3 headers?
+
 Expand the `consumer-lambda` span. Can you find the attributes from your message?
 
 ![image](https://user-images.githubusercontent.com/5187861/219032913-70dfc212-f5d7-4468-bda8-5041ea3e21e0.png)
+
+
 
 
 * Conclusion
