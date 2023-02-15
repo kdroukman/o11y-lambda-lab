@@ -95,7 +95,15 @@ cat serverless.yml
 2. Can you identify where OpenTelemetry instrumentation is being set up?
 3. Can you determine which instrumentation information is being provided by the Environment Variables?
 
-You should see the Splunk OpenTelemetry Lambda layer being added to each fuction. You can see the relevant layers and version for each region here: https://github.com/signalfx/lambda-layer-versions/blob/main/splunk-apm/splunk-apm.md
+You should see the Splunk OpenTelemetry Lambda layer being added to each fuction. 
+
+![image](https://user-images.githubusercontent.com/5187861/219007839-fd96d1bb-c53d-4cfa-9533-c7982262459d.png)
+
+You can see the relevant layer ARNs (Amazon Resource Name) and latest versions for each AWS region here: https://github.com/signalfx/lambda-layer-versions/blob/main/splunk-apm/splunk-apm.md
+
+You should also see in the Environment variables that are being set. Using the environment variables we are specifying to use the NodeJS function wrapper, since our Lambda is written in NodeJS. We are also providing APM service name and environment name, as well as Access token and Realm details. 
+
+Take a look at the function code.
 
 ```
 cat handler.js
@@ -103,6 +111,8 @@ cat handler.js
 
 1. Can you identify the code for producer function?
 2. Can you identify the code for consumer function?
+
+Note that there is no mention of Splunk or OpenTelemetry in the code. We are adding the instrumentation using the Lambda layer and Environment Variables only. 
 
 ### Deploy your Lambdas
 
@@ -153,7 +163,7 @@ serverless logs -f producer
 
 #### Consumer function logs:
 ```
-serverless logs -f producer
+serverless logs -f consumer
 ```
 
 Examine the logs carefully. Do you see OpenTelemetry being loaded? Look out for lines with `splunk-extension-wrapper`.
