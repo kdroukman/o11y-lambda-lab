@@ -4,7 +4,19 @@
 
 You should already have the lab content available on your ec2 lab host. You will need to update custom settings to your environment. Please follow the steps bellow to achieve that. 
 
-In Splunk Observability Cloud obtain your Access Token and Realm Values. 
+Ensure that your working lab folder is on your home directory:
+```
+ls
+```
+Expected output:
+You should see the directory `o11y-lambda-lab` in the list. 
+
+*Note:* If you don't see the directory, fetch the contents of this repository by running the following command:
+```
+git clone -b master https://github.com/kdroukman/o11y-lambda-lab.git
+```
+
+In your Splunk Observability Cloud lab Organisation (Org) obtain your Access Token and Realm Values. 
 
 ### 1. Set Environment Variables
 
@@ -27,14 +39,8 @@ cat ~/o11y-lambda-lab/auto/serverless.yml
 ```
 
 Locate the following section and confirm that the parameters have been set:
-```
-# USER SET VALUES =====================              
-custom: 
-  accessToken: <set to your access token>
-  realm: <set to your realm>
-  prefix: <set to your hostname>
-#======================================  
-```
+![image](https://user-images.githubusercontent.com/5187861/219005735-a494c35a-41c4-4350-930a-b9ce7e1f64ea.png)
+
 
 ### 3. Update Manual-instrumentation template
 Update your manual-instrumentation Serverless template. 
@@ -48,14 +54,7 @@ cat ~/o11y-lambda-lab/manual/serverless.yml
 ```
 
 Locate the following section and confirm that the parameters have been set:
-```
-# USER SET VALUES =====================              
-custom: 
-  accessToken: <set to your access token>
-  realm: <set to your realm>
-  prefix: <set to your hostname>
-#======================================  
-```
+![image](https://user-images.githubusercontent.com/5187861/219005735-a494c35a-41c4-4350-930a-b9ce7e1f64ea.png)
 
 ### 4. Set your AWS Credentials:
 
@@ -96,6 +95,8 @@ cat serverless.yml
 2. Can you identify where OpenTelemetry instrumentation is being set up?
 3. Can you determine which instrumentation information is being provided by the Environment Variables?
 
+You should see the Splunk OpenTelemetry Lambda layer being added to each fuction. You can see the relevant layers and version for each region here: https://github.com/signalfx/lambda-layer-versions/blob/main/splunk-apm/splunk-apm.md
+
 ```
 cat handler.js
 ```
@@ -110,7 +111,8 @@ Run the following command to deploy your Lambda Functions:
 serverless deploy
 ```
 
-This command will follow the instructions in your `serverless.yml` template to create your Lambda functions and your Kinesis stream. 
+This command will follow the instructions in your `serverless.yml` template to create your Lambda functions and your Kinesis stream. Note it may take a couple of minutes to execute. 
+
 Expected output:
 ```
 Deploying hostname-lambda-lab to stage dev (us-east-1)
