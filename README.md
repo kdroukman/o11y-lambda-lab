@@ -126,3 +126,17 @@ Check the details of your serverless functions:
 ```
 serverless info
 ```
+
+### Send some Traffic
+
+Copy the value of your endpoint and use `curl` to send a payload to your producer function. Note that the flat `-d` is followed by your payload. Try changing the value of `name` to your name.
+
+```
+curl -d "{ 'name': 'CHANGE_ME', 'superpower': 'CHANGE_ME' }" CHANGE_TO_YOUR_PRODUCER_ENDPOINT
+```
+
+You should see the following output if your message is successful:
+```
+{"message":"Message placed in the Event Stream!"}
+```
+
