@@ -166,6 +166,32 @@ Select APM from the Main Menu and then select your APM Environment. Your APM env
 
 ![image](https://user-images.githubusercontent.com/5187861/218997315-e3e5f6e1-fd7f-4267-8113-79ca748b9d77.png)
 
+You should see your lambda function and Kinesis service show up in the map. 
+
+Go to Explore the service map for a better view. 
+
+![image](https://user-images.githubusercontent.com/5187861/219001784-a25e7c9f-981d-49b9-b6df-f39d2bff0975.png)
+
+You should be able to see the `producer-lambda` and the call it is making to `Kinesis` service.
+![image](https://user-images.githubusercontent.com/5187861/219001985-fbf431ac-010a-4b1b-a9b0-3bad6825c5b6.png)
+
+What about your `consumer-lambda`? Where is it?
+
+Click into *Traces* and examine one of the traces generated. 
+![image](https://user-images.githubusercontent.com/5187861/219002535-d11afd2f-9134-4e1b-87fb-f3af47969372.png)
+
+We can see the `producer-lambda` placing a Record on the Kinesis stream. But we can't see the `consumer-function` fetching it. 
+
+This is because the *Context* is not being propagated. 
+Our Distributed Trace stops at *Kinesis* and we can't see any further. 
+
+Not yet...
+
+Let's see how we fix this in the next section of this lab. 
+
+
+
+
 
 
 
