@@ -75,7 +75,10 @@ const consumer = function( event, context ){
 			span.setAttribute("span.kind", "server");
 			const body = JSON.parse( message ).record;
 			if (body.name) {
-				span.setAttribute("my-custom-tag", "Hi, " + body.name + "!");
+				span.setAttribute("custom.tag.name", body.name);
+			}
+			if (body.superpower) {
+				span.setAttribute("custom.tag.superpower", body.superpower);
 			}
 
 			//-------------------------------------------
