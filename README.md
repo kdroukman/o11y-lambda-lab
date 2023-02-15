@@ -391,6 +391,7 @@ You can read up on the two common propagation standards:
 2. B3: https://github.com/openzipkin/b3-propagation#overall-process
 
 Which one are we using? *It should be self-explanatory from the Propagator we are creating in the Functions*
+
 **Bonus Question:** What happens if we mix and match the W3C and B3 headers?
 
 Expand the `consumer-lambda` span. Can you find the attributes from your message?
