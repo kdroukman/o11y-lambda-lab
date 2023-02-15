@@ -73,7 +73,6 @@ const consumer = function( event, context ){
                         const span = tracer.startSpan("Kinesis.getRecord", undefined, parentContext);
 			 
 			span.setAttribute("span.kind", "server");
-			span.setAttribute("deployment.environment", (process.env.OTEL_RESOURCE_ATTRIBUTES).split("=").pop());
 			const body = JSON.parse( message ).record;
 			if (body.name) {
 				span.setAttribute("custom.tag.name", body.name);
