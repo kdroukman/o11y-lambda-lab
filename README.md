@@ -162,5 +162,13 @@ Now it's time to check how your Lambda traffic has been captured in Splunk APM.
 
 Navigate to your Lab Organisation at [https://app.us1.signalfx.com]
 
+Select APM from the Main Menu and then select your APM Environment. Your APM environment should be in the format `$(hostname)-lambda-lab` where the hostname value is a four letter name of your lab host. (Check it by looking at your command prompt, or by running `echo $(hostname)`)
+
+![image](https://user-images.githubusercontent.com/5187861/218997315-e3e5f6e1-fd7f-4267-8113-79ca748b9d77.png)
+
+
+
+
+
 
 
