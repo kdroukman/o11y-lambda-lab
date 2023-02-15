@@ -137,6 +137,7 @@ functions:
   producer: hostname-lambda-lab-dev-producer (1.6 kB)
   consumer: hostname-lambda-lab-dev-consumer (1.6 kB)
 ```
+*Note: serverless.yml is in fact a CloudFormation template. CloudFormation is an infrastructure as code service from AWS. You can read more about it here - https://aws.amazon.com/cloudformation/*
 
 Check the details of your serverless functions:
 ```
@@ -144,12 +145,14 @@ serverless info
 ```
 
 Take note of your endpoint value:
+
 ![image](https://user-images.githubusercontent.com/5187861/219013249-bfa87ba1-f719-4287-8124-f95d87df83f5.png)
 
 
 ### Send some Traffic
 
-Use the `curl` command to send a payload to your producer function. Note that the flat `-d` is followed by your payload. Try changing the value of `name` to your name. Replace `YOUR_ENDPOINT` with the endpoint from your previous step. 
+Use the `curl` command to send a payload to your producer function. Note that the flat `-d` is followed by your payload. Try changing the value of `name` to your name and telling the Lambda function about your `superpower`. 
+Replace `YOUR_ENDPOINT` with the endpoint from your previous step. 
 
 ```
 curl -d "{ 'name': 'CHANGE_ME', 'superpower': 'CHANGE_ME' }" YOUR_ENDPOINT
@@ -195,6 +198,8 @@ Navigate to your Lab Organisation at [https://app.us1.signalfx.com]
 
 Select APM from the Main Menu and then select your APM Environment. Your APM environment should be in the format `$(hostname)-lambda-lab` where the hostname value is a four letter name of your lab host. (Check it by looking at your command prompt, or by running `echo $(hostname)`)
 
+*Note: it may take a few minutes for you traces to appear in Splunk APM. Try hitting refresh on your browser until you find your environement name in the list of Envrionments*
+
 ![image](https://user-images.githubusercontent.com/5187861/218997315-e3e5f6e1-fd7f-4267-8113-79ca748b9d77.png)
 
 You should see your lambda function and Kinesis service show up in the map. 
@@ -211,16 +216,149 @@ What about your `consumer-lambda`? Where is it?
 Click into *Traces* and examine one of the traces generated. 
 ![image](https://user-images.githubusercontent.com/5187861/219002535-d11afd2f-9134-4e1b-87fb-f3af47969372.png)
 
-We can see the `producer-lambda` placing a Record on the Kinesis stream. But we can't see the `consumer-function` fetching it. 
+We can see the `producer-lambda` putting a Record on the Kinesis stream. But we can't see the `consumer-function` consuming that record. 
 
-This is because the *Context* is not being propagated. 
-Our Distributed Trace stops at *Kinesis* and we can't see any further. 
+This is because the *Context* is not being propagated - this is not something that is supported automatically Out-of-the-Box for Kinesis service at the time of this lab. Our Distributed Trace stops at *Kinesis* inferred service and we can't see the propagation any further. 
 
 Not yet...
 
-Let's see how we fix this in the next section of this lab. 
+Let's see how we work around this in the next section of this lab. 
+
+## Manual Instrumentation
+
+Navigate to the `manual` directory that contains manually instrumentated code. 
+```
+cd ~/o11y-lambda-lab/manual
+```
+
+Inspect the contents of the files in this directory. 
+Take a look at the `serverless.yml` template. 
+```
+cat serverless.yml
+```
+Do you see any difference from the same file in your `auto` directory?
+You can try to compare them with a `diff` command:
+```
+diff ~/o11y-lambda-lab/auto/serverless.yml ~/o11y-lambda-lab/manual/serverless.yml 
+```
+
+There is no difference! *(Well, there shouldn't be. Get a lab assistant to help you if there is)*
+
+![image](https://user-images.githubusercontent.com/5187861/219018152-6b21a172-9447-4e36-9ce5-814438c5d427.png)
 
 
+Take a look at the function code.
+
+```
+cat handler.js
+```
+
+Compare it with the same file in `auto` directory using the `diff` command:
+```
+diff ~/o11y-lambda-lab/auto/handler.js ~/o11y-lambda-lab/manual/handler.js 
+```
+
+Look at all these differences!
+
+Notice how we are now importing some OpenTelemetry libraries directly into our function to handle some of the manual instrumenation tasks we require.
+
+We are using https://www.npmjs.com/package/@opentelemetry/api to manipulate the tracing logic in our functions. 
+We are using https://www.npmjs.com/package/@opentelemetry/core to access the **Propagator** objects that we will use to manually propagate our context with. 
+
+The bellow code executes the following steps inside the Producer function:
+1. Get the current Active Span.
+2. Create a Propagator.
+3. Initialize a context carrier object.
+4. Inject the context of the active span into the carrier object.
+5. Modify the record we are about to put on our Kinesis stream to include the carrier that will carry the active span's context to the consumer.
+
+![image](https://user-images.githubusercontent.com/5187861/219020209-33a3b24a-b3a7-4d80-865f-fbf3a8d8754a.png)
+
+The bellow code executes the following steps inside the Consumer function:
+1. Extract the context that we obtained from the Producer into a carrier object.
+2. Create a Propagator. 
+3. Extract the context from the carrier object in Customer function's parent span context.
+4. Start a new span with the parent span context.
+5. Bonus: Add extra attributes to your span, including custom ones with the values from your message!
+6. Once completed, end the span.
+
+![image](https://user-images.githubusercontent.com/5187861/219020986-0ed2f8b9-8842-47cb-ac30-fdf9851015e6.png)
+
+Now let's see the difference this makes. 
+
+### Re-deploy your Lambdas
+
+Run the following command to deploy your Lambda Functions:
+```
+serverless deploy
+```
+
+This command will follow the instructions in your `serverless.yml` template to create your Lambda functions and your Kinesis stream. Note it may take a couple of minutes to execute. 
+
+Expected output:
+```
+Deploying hostname-lambda-lab to stage dev (us-east-1)
+...
+...
+endpoint: POST - https://randomstring.execute-api.us-east-1.amazonaws.com/dev/producer
+functions:
+  producer: hostname-lambda-lab-dev-producer (1.6 kB)
+  consumer: hostname-lambda-lab-dev-consumer (1.6 kB)
+```
+*Note: serverless.yml is in fact a CloudFormation template. CloudFormation is an infrastructure as code service from AWS. You can read more about it here - https://aws.amazon.com/cloudformation/*
+
+Check the details of your serverless functions:
+```
+serverless info
+```
+
+Take note of your endpoint value:
+
+![image](https://user-images.githubusercontent.com/5187861/219013249-bfa87ba1-f719-4287-8124-f95d87df83f5.png)
+
+
+### Send some Traffic
+
+Use the `curl` command to send a payload to your producer function. Note that the flat `-d` is followed by your payload. Try changing the value of `name` to your name and telling the Lambda function about your `superpower`. 
+Replace `YOUR_ENDPOINT` with the endpoint from your previous step. 
+
+```
+curl -d "{ 'name': 'CHANGE_ME', 'superpower': 'CHANGE_ME' }" YOUR_ENDPOINT
+```
+
+For example:
+![image](https://user-images.githubusercontent.com/5187861/219013758-8e590b34-1c0a-4559-9d6a-4b58cc3d1d5e.png)
+
+
+
+You should see the following output if your message is successful:
+```
+{"message":"Message planced in the Event Stream: hostname-eventSteam"}
+```
+
+If unsuccessful, you will see:
+```
+{"message": "Internal server error"}
+```
+Ask one of the lab facilitators for assistance. 
+
+If you see a success message, generate more load: re-send that messate 5+ times. You should keep seeing a success message after each send. 
+
+Now check the lambda logs output.
+
+#### Producer function logs:
+```
+serverless logs -f producer
+```
+
+#### Consumer function logs:
+```
+serverless logs -f consumer
+```
+
+Examine the logs carefully. Do you see OpenTelemetry being loaded? Look out for lines with `splunk-extension-wrapper`.
+
+### Find your Lambda data in Splunk APM
 
 
 
