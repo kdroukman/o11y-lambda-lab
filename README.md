@@ -155,11 +155,11 @@ Use the `curl` command to send a payload to your producer function. Note that th
 Replace `YOUR_ENDPOINT` with the endpoint from your previous step. 
 
 ```
-curl -d "{ 'name': 'CHANGE_ME', 'superpower': 'CHANGE_ME' }" YOUR_ENDPOINT
+curl -d '{ "name": "CHANGE_ME", "superpower": "CHANGE_ME" }' YOUR_ENDPOINT
 ```
 
 For example:
-![image](https://user-images.githubusercontent.com/5187861/219013758-8e590b34-1c0a-4559-9d6a-4b58cc3d1d5e.png)
+![image](https://user-images.githubusercontent.com/5187861/219024684-cd1853cf-8d9d-4fbb-af2f-96ba518622e3.png)
 
 
 
@@ -288,12 +288,12 @@ Now let's see the difference this makes.
 
 ### Re-deploy your Lambdas
 
-Run the following command to deploy your Lambda Functions:
+While remaining in your `manual` directory, run the following command to deploy your Lambda Functions:
 ```
 serverless deploy
 ```
 
-This command will follow the instructions in your `serverless.yml` template to create your Lambda functions and your Kinesis stream. Note it may take a couple of minutes to execute. 
+This command will follow the instructions in your `serverless.yml` template to update your Lambda functions with new `handler.js` code.
 
 Expected output:
 ```
@@ -312,23 +312,22 @@ Check the details of your serverless functions:
 serverless info
 ```
 
-Take note of your endpoint value:
+Take note of your endpoint value. It should remain the same:
 
 ![image](https://user-images.githubusercontent.com/5187861/219013249-bfa87ba1-f719-4287-8124-f95d87df83f5.png)
 
 
-### Send some Traffic
+### Send some Traffic again
 
 Use the `curl` command to send a payload to your producer function. Note that the flat `-d` is followed by your payload. Try changing the value of `name` to your name and telling the Lambda function about your `superpower`. 
 Replace `YOUR_ENDPOINT` with the endpoint from your previous step. 
 
 ```
-curl -d "{ 'name': 'CHANGE_ME', 'superpower': 'CHANGE_ME' }" YOUR_ENDPOINT
+curl -d '{ "name": "CHANGE_ME", "superpower": "CHANGE_ME" }' YOUR_ENDPOINT
 ```
 
 For example:
-![image](https://user-images.githubusercontent.com/5187861/219013758-8e590b34-1c0a-4559-9d6a-4b58cc3d1d5e.png)
-
+![image](https://user-images.githubusercontent.com/5187861/219024684-cd1853cf-8d9d-4fbb-af2f-96ba518622e3.png)
 
 
 You should see the following output if your message is successful:
@@ -356,9 +355,11 @@ serverless logs -f producer
 serverless logs -f consumer
 ```
 
-Examine the logs carefully. Do you see OpenTelemetry being loaded? Look out for lines with `splunk-extension-wrapper`.
+Examine the logs carefully. Do you notice the difference? Can you see that we are now logging 
 
-### Find your Lambda data in Splunk APM
+### Find your updated Lambda data in Splunk APM
+
+Navigate back to APM in Splunk Obeservabilty Cloud - https://app.us1.signalfx.com/#/apm
 
 
 
