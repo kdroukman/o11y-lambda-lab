@@ -401,7 +401,7 @@ Expand the `consumer-lambda` span. Can you find the attributes from your message
 
 
 
-* Conclusion
+# Conclusion
 
 Congratuations on finishing the lab. You can now built out a Trace manually by linking two different functions together. This is very powerful, when auto-instrumenation, or third-party systems do not support context propagation out of the box. 
 
