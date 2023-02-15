@@ -101,6 +101,10 @@ You should see the Splunk OpenTelemetry Lambda layer being added to each fuction
 
 You can see the relevant layer ARNs (Amazon Resource Name) and latest versions for each AWS region here: https://github.com/signalfx/lambda-layer-versions/blob/main/splunk-apm/splunk-apm.md
 
+You should also see in the Environment variables that are being set. 
+![image](https://user-images.githubusercontent.com/5187861/219012413-fddbea72-3f5a-418f-9f8f-83cf2305d976.png)
+
+Using the environment variables we are specifying to use the NodeJS function wrapper, since our Lambda is written in NodeJS. We are also providing APM service name and environment name, as well as Access token and Realm details. 
 You should also see in the Environment variables that are being set. Using the environment variables we are specifying to use the NodeJS function wrapper, since our Lambda is written in NodeJS. We are also providing APM service name and environment name, as well as Access token and Realm details. 
 
 Take a look at the function code.
@@ -139,20 +143,35 @@ Check the details of your serverless functions:
 serverless info
 ```
 
+Take note of your endpoint value:
+![image](https://user-images.githubusercontent.com/5187861/219013249-bfa87ba1-f719-4287-8124-f95d87df83f5.png)
+
+
 ### Send some Traffic
 
-Copy the value of your endpoint and use `curl` to send a payload to your producer function. Note that the flat `-d` is followed by your payload. Try changing the value of `name` to your name.
+Use the `curl` command to send a payload to your producer function. Note that the flat `-d` is followed by your payload. Try changing the value of `name` to your name. Replace `YOUR_ENDPOINT` with the endpoint from your previous step. 
 
 ```
-curl -d "{ 'name': 'CHANGE_ME', 'superpower': 'CHANGE_ME' }" CHANGE_TO_YOUR_PRODUCER_ENDPOINT
+curl -d "{ 'name': 'CHANGE_ME', 'superpower': 'CHANGE_ME' }" YOUR_ENDPOINT
 ```
+
+For example:
+![image](https://user-images.githubusercontent.com/5187861/219013758-8e590b34-1c0a-4559-9d6a-4b58cc3d1d5e.png)
+
+
 
 You should see the following output if your message is successful:
 ```
 {"message":"Message planced in the Event Stream: hostname-eventSteam"}
 ```
 
-To generate more load, resent that messate 5 or more time now. You should keep seeing a success message after each send. 
+If unsuccessful, you will see:
+```
+{"message": "Internal server error"}
+```
+Ask one of the lab facilitators for assistance. 
+
+If you see a success message, generate more load: re-send that messate 5+ times. You should keep seeing a success message after each send. 
 
 Now check the lambda logs output.
 
