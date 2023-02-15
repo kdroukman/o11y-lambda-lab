@@ -137,6 +137,30 @@ curl -d "{ 'name': 'CHANGE_ME', 'superpower': 'CHANGE_ME' }" CHANGE_TO_YOUR_PROD
 
 You should see the following output if your message is successful:
 ```
-{"message":"Message placed in the Event Stream!"}
+{"message":"Message planced in the Event Stream: hostname-eventSteam"}
 ```
+
+To generate more load, resent that messate 5 or more time now. You should keep seeing a success message after each send. 
+
+Now check the lambda logs output.
+
+#### Producer function logs:
+```
+serverless logs -f producer
+```
+
+#### Consumer function logs:
+```
+serverless logs -f producer
+```
+
+Examine the logs carefully. Do you see OpenTelemetry being loaded? Look out for lines with `splunk-extension-wrapper`.
+
+### Find your Lambda data in Splunk APM
+
+Now it's time to check how your Lambda traffic has been captured in Splunk APM. 
+
+Navigate to your Lab Organisation at [https://app.us1.signalfx.com]
+
+
 
