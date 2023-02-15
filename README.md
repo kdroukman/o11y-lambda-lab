@@ -1,5 +1,7 @@
 # Observability Lambda Lab
 
+Welcome to Observability Lambda Lab. This lab will make a tracing superhero out of you! Follow the steps bellow to set up and get started. 
+
 ## Pre-Requisites
 
 You should already have the lab content available on your ec2 lab host. You will need to update custom settings to your environment. Please follow the steps bellow to achieve that. 
@@ -355,11 +357,45 @@ serverless logs -f producer
 serverless logs -f consumer
 ```
 
-Examine the logs carefully. Do you notice the difference? Can you see that we are now logging 
+Examine the logs carefully. Do you notice the difference? 
+
+Note that we are logging our Record value built inside the Producer function. Copy one of the underlined sub-sections of your trace parent context, and save it for later. 
+
+![image](https://user-images.githubusercontent.com/5187861/219031025-61ae5852-dabb-4c86-a215-aead651ab9c7.png)
+
+
 
 ### Find your updated Lambda data in Splunk APM
 
 Navigate back to APM in Splunk Obeservabilty Cloud - https://app.us1.signalfx.com/#/apm
+
+Navigate to Explore the Service Dependency Map again. 
+
+![image](https://user-images.githubusercontent.com/5187861/219030534-9dc94124-16e1-4350-b63f-0a4e4c8aa640.png)
+
+You should be able to see the *consumer-lambda* now clearly connected to the *producer-lambda*.
+
+Remember the value you copied from your producer logs? You can run `serverless logs -f producer` command again on your EC2 lab host to fetch one. 
+
+Take that value, and paste it into trace search:
+
+![image](https://user-images.githubusercontent.com/5187861/219031728-c926f2e4-78c7-438f-ad38-98f6facbad66.png)
+
+Click on *Go* and you should be able to find the logged Trace:
+
+![image](https://user-images.githubusercontent.com/5187861/219032326-becba400-c08d-4762-93b5-ba3f2c2322cb.png)
+
+Expand the `consumer-lambda` span. Can you find the attributes from your message?
+
+![image](https://user-images.githubusercontent.com/5187861/219032913-70dfc212-f5d7-4468-bda8-5041ea3e21e0.png)
+
+
+* Conclusion
+
+Congratuations on finishing the lab. You can now built out a Trace manually by linking two different functions together. This is very powerful, when auto-instrumenation, or third-party systems do not support context propagation out of the box. 
+
+Notice in the lab we used a combination of auto-instrumenation with some extra manual steps to do what we need to, in order to connect the trace. This is a common way to instrument, and workaround any instrumentation challenges you may face. 
+
 
 
 
