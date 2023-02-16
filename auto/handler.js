@@ -43,7 +43,7 @@ const producer = async( event ) => {
 	};
 };
 
-const consumer = function( event, context ){
+const consumer = async( event ) => {
 	try{
 		for( const record of event.Records ) {
 			const payload = record.kinesis;
