@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# o11y-lambda-lab
-=======
 # Observability Lambda Lab
 
 Welcome to Observability Lambda Lab. This lab will make a tracing superhero out of you! Follow the steps bellow to set up and get started. 
@@ -402,7 +399,13 @@ Expand the `consumer-lambda` span. Can you find the attributes from your message
 ![image](https://user-images.githubusercontent.com/5187861/219032913-70dfc212-f5d7-4468-bda8-5041ea3e21e0.png)
 
 
+# Clean up
 
+Please run the following command to delete your Lambda function and clean up the lab:
+
+```
+serveless deploy
+```
 
 # Conclusion
 
@@ -410,12 +413,3 @@ Congratuations on finishing the lab. You can now built out a Trace manually by l
 
 Notice in the lab we used a combination of auto-instrumenation with some extra manual steps to do what we need to, in order to connect the trace. This is a common way to instrument, and workaround any instrumentation challenges you may face. 
 
-
-
-
-
-
-
-
-
->>>>>>> master
