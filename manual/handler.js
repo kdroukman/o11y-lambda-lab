@@ -43,7 +43,7 @@ const producer = async( event ) => {
 			PartitionKey: uuidv4(),
 			Data: data,
 		}).promise();
-		message = "Message planced in the Event Stream: " + streamName;
+		message = "Message placed in the Event Stream: " + streamName;
 	} catch ( error ) {
 		console.log(error);
 		message = error;

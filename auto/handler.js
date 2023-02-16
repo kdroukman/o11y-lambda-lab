@@ -28,7 +28,7 @@ const producer = async( event ) => {
 			Data: event.body,
 		}).promise();
 
-		message = "Message planced in the Event Stream: " + streamName;
+		message = "Message placed in the Event Stream: " + streamName;
 	} catch ( error ) {
 		console.log(error);
 		message = error;
